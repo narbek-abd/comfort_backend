@@ -9,13 +9,23 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display categories with children.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return Category::all();
+        return Category::with('children')->whereNull('parent_id')->get();;
+    }
+
+    /**
+     * Display a list of categories.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function list()
+    {
+        return Category::all();;
     }
 
     /**
