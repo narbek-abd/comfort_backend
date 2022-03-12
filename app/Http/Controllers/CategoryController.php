@@ -23,9 +23,13 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function list()
+    public function list(Request $request)
     {
-        return Category::all();;
+        if($request->query('limit') && is_numeric($request->query('limit'))) {
+            return Category::paginate($request->query('limit'));
+        }
+
+        return Category::all();
     }
 
     /**
