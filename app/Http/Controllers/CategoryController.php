@@ -49,9 +49,9 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show($category)
     {
-        return $category;
+        return Category::where('id', $category)->with('children')->first();
     }
 
     /**
