@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -18,6 +19,21 @@ class ProductController extends Controller
         //
     }
 
+
+    /**
+     * Display a list of products.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function list(Request $request)
+    {
+        if($request->query('limit') && is_numeric($request->query('limit'))) {
+            return Product::with(['category', 'images'])->paginate($request->query('limit'));
+        }
+
+        return Product::with(['category', 'images'])->all();
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -30,8 +46,10 @@ class ProductController extends Controller
 
         if($request->file('images')) {
             foreach ($request->file('images') as $imageFile) {
-                $imageFile->store('product_images');
+                $path[] = ['product_id' => $product->id, 'image' => $imageFile->store('product_images')];
             }
+
+             ProductImage::insert($path);
         }
 
         return $product;
@@ -40,12 +58,11 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show($product_id)
     {
-        return $product;
+        return Product::where('id', $product_id)->with(['category', 'images'])->first();
     }
 
     /**
