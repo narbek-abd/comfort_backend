@@ -1,11 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -17,8 +17,8 @@ class ProductController extends Controller
     public function index()
     {
         //
+        
     }
-
 
     /**
      * Display a list of products.
@@ -27,11 +27,13 @@ class ProductController extends Controller
      */
     public function list(Request $request)
     {
-        if($request->query('limit') && is_numeric($request->query('limit'))) {
-            return Product::with(['category', 'images'])->paginate($request->query('limit'));
+        if ($request->query('limit') && is_numeric($request->query('limit'))) {
+            return Product::with(['category', 'images'])
+                ->paginate($request->query('limit'));
         }
 
-        return Product::with(['category', 'images'])->all();
+        return Product::with(['category', 'images'])
+            ->all();
     }
 
     /**
@@ -44,12 +46,8 @@ class ProductController extends Controller
     {
         $product = Product::create($request->validated());
 
-        if($request->file('images')) {
-            foreach ($request->file('images') as $imageFile) {
-                $path[] = ['product_id' => $product->id, 'image' => $imageFile->store('product_images')];
-            }
-
-             ProductImage::insert($path);
+        if ($request->file('images')) {
+            insert_images($request->file('images'));
         }
 
         return $product;
@@ -62,7 +60,8 @@ class ProductController extends Controller
      */
     public function show($product_id)
     {
-        return Product::where('id', $product_id)->with(['category', 'images'])->first();
+        return Product::where('id', $product_id)->with(['category', 'images'])
+            ->first();
     }
 
     /**
@@ -74,7 +73,15 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product)
     {
-        return $product->update($request->validated());
+        $product->update($request->validated());
+
+        if ($request->file('images')) {
+            self::insert_images($request->file('images') , $product);
+        }
+
+        return Product::where('id', $product->id)
+            ->with(['category', 'images'])
+            ->first();
     }
 
     /**
@@ -87,4 +94,38 @@ class ProductController extends Controller
     {
         return $product->delete();
     }
+
+    /**
+     * Remove the iamge of product
+     *
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy_product_image(ProductImage $product_image)
+    {
+        $image_name = $product_image->image;
+
+        if (Storage::exists($image_name)) {
+            Storage::delete($image_name);
+        }
+
+        return $product_image->delete();
+    }
+
+    /**
+     * Remove the iamge of product
+     *
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    private static function insert_images($images, $product)
+    {
+        foreach ($images as $imageFile)
+        {
+            $imagePath[] = ['product_id' => $product->id, 'image' => $imageFile->store('product_images') ];
+        }
+
+        ProductImage::insert($imagePath);
+    }
 }
+

@@ -26,3 +26,4 @@ Route::resource('/categories', CategoryController::class);
 
 Route::get('/products/list', [ProductController::class, 'list']);
 Route::resource('/products', ProductController::class);
+Route::delete('/products/image/{product_image}', [ProductController::class, 'destroy_product_image']);
