@@ -47,7 +47,7 @@ class ProductController extends Controller
         $product = Product::create($request->validated());
 
         if ($request->file('images')) {
-            insert_images($request->file('images'));
+            self::insert_images($request->file('images'), $product);
         }
 
         return $product;
