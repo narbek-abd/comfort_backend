@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Filters\ProductsFilter;
 
 class ProductController extends Controller
 {
@@ -27,13 +28,18 @@ class ProductController extends Controller
      */
     public function list(Request $request)
     {
+        $filter = new ProductsFilter($request->query());
+
         if ($request->query('limit') && is_numeric($request->query('limit'))) {
-            return Product::with(['category', 'images'])
+            return Product::filter($filter)->with(['category', 'images'])
                 ->paginate($request->query('limit'));
         }
 
-        return Product::with(['category', 'images'])
-            ->all();
+        $positions = Product::filter($filter)->paginate(6);
+
+
+        return Product::filter($filter)->with(['category', 'images'])
+            ->get();
     }
 
     /**
