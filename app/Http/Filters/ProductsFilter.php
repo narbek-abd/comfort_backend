@@ -17,6 +17,12 @@ class ProductsFilter extends QueryFilter
         $builder->where('price', '<=', $value);
     }
 
+    public function categories(Builder $builder, $value)
+    {
+        $categories = explode("-", $value);
+        $builder->whereIn('category_id', $categories);
+    }
+
     public function sort_by(Builder $builder, $value)
     {
         if($value === 'new') {
