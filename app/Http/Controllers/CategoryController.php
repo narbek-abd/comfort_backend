@@ -29,6 +29,10 @@ class CategoryController extends Controller
             return Category::paginate($request->query('limit'));
         }
 
+        if($request->query('slug')) {
+            return Category::where('slug', "=", $request->query('slug'))->with('children')->first();
+        }
+
         return Category::all();
     }
 
