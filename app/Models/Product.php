@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Order;
 use App\Models\ProductImage;
 use App\Models\Traits\Filterable;
@@ -29,5 +30,10 @@ class Product extends Model
     public function orders()
     {
         return $this->belongsToMany(Order::class);
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable')->whereNull('parent_id')->with('replies');
     }
 }

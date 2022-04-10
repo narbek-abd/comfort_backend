@@ -70,6 +70,16 @@ class ProductController extends Controller
             ->first();
     }
 
+      /**
+     * Display comments of products.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function comments(Product $product)
+    {
+        return $product->comments()->paginate(6);
+    }
+
     /**
      * Update the specified resource in storage.
      *
