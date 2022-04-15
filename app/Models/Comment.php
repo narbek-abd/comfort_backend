@@ -12,6 +12,11 @@ class Comment extends Model
 
     public function replies()
     {
+        return $this->recursive_replies()->with('replies');
+    }
+
+    public function recursive_replies()
+    {
         return $this->hasMany(Comment::class, 'parent_id');
     }
 }

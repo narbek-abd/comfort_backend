@@ -29,7 +29,10 @@ Route::get('/products/list', [ProductController::class, 'list']);
 Route::resource('/products', ProductController::class);
 
 Route::get('/product/comments/{product}', [ProductController::class, 'comments']);
+
 Route::post('/product/comments', [CommentController::class, 'store'])->name('product.comments.store');
+Route::put('/product/comments/{comment}', [CommentController::class, 'update']);
+Route::delete('/product/comments/{comment}', [CommentController::class, 'destroy']);
 
 Route::delete('/products/image/{product_image}', [ProductController::class, 'destroy_product_image']);
 

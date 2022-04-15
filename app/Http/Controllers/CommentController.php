@@ -42,8 +42,6 @@ class CommentController extends Controller
             $comment->parent_id = $request->input('parent_id');
         }
 
-        dd($request->input('product_id'));
-
         $product = Product::find($request->input('product_id'));
 
         return $product->comments()->save($comment);

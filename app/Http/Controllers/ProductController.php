@@ -75,9 +75,10 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function comments(Product $product)
+    public function comments(Request $request, Product $product)
     {
-        return $product->comments()->paginate(6);
+        $limit = $request->input('limit') ?? 6;
+        return $product->comments()->paginate($limit);
     }
 
     /**
