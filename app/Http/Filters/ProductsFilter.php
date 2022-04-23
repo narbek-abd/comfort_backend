@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ProductsFilter extends QueryFilter
 {
+    public function search(Builder $builder, $value)
+    {
+        $builder->where('name', 'like', '%' . $value . '%');
+    }
+
     public function price_from(Builder $builder, $value)
     {
         $builder->where('price', '>=', $value);

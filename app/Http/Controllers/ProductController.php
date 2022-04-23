@@ -15,10 +15,13 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        
+        if($request->ids) {
+           return Product::whereIn('id', $request->ids)->with(['category', 'images'])->get();
+        }
+
+        return Product::get();
     }
 
     /**
@@ -57,6 +60,16 @@ class ProductController extends Controller
         }
 
         return $product;
+    }
+
+     /**
+     * Display a list of categories.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function count()
+    {
+        return Product::count();
     }
 
     /**

@@ -63,6 +63,16 @@ class OrderController extends Controller
         return 1;
     }
 
+     /**
+     * Display a list of categories.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function count()
+    {
+        return Order::count();
+    }
+
     /**
      * Remove the specified resource from storage.
      *

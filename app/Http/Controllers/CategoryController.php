@@ -26,7 +26,7 @@ class CategoryController extends Controller
     public function list(Request $request)
     {
         if($request->query('limit') && is_numeric($request->query('limit'))) {
-            return Category::paginate($request->query('limit'));
+            return Category::with(['children', 'parent'])->paginate($request->query('limit'));
         }
 
         if($request->query('slug')) {
@@ -34,6 +34,16 @@ class CategoryController extends Controller
         }
 
         return Category::all();
+    }
+
+     /**
+     * Display a list of categories.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function count()
+    {
+        return Category::count();
     }
 
     /**
@@ -55,7 +65,7 @@ class CategoryController extends Controller
      */
     public function show($category)
     {
-        return Category::where('id', $category)->with('children')->first();
+        return Category::where('id', $category)->with(['children', 'parent'])->first();
     }
 
     /**
