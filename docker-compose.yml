@@ -1,0 +1,64 @@
+version: '3.8'
+
+# networks:
+#   laravel:
+#     driver: bridge
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: NginxDockerfile
+    container_name: nginx
+    tty: true
+    ports: 
+      - "8081:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - php
+      - mysql
+    links:
+      - php  
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3307:3306"
+    volumes: 
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=1234
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=database
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on: 
+     - mysql
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "9000:9000"
+    links:
+      - mysql  
+  composer:
+    image: composer:latest
+    container_name: composer
+    depends_on:
+      - php
+    tty: true
+    volumes:
+      - ./:/app
+    command: ["composer", "install"]

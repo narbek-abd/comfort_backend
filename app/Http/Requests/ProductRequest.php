@@ -23,14 +23,22 @@ class ProductRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+         $rules = [
             'name' => 'required|string',
             'price' => 'required|numeric',
-            'category_id' => 'required|numeric',
+            'quantity' => 'required|numeric',
             'description' => 'nullable|string',
             'details' => 'nullable|string',
             'images' => 'nullable|array',
             'images.*' => 'bail|file|image|mimes:jpg,png'
         ];
+
+        if($this->route()->named('products.store')) {
+            $rules['category_id'] = 'required|numeric';
+        } else {
+            $rules['category_id'] = 'numeric';
+        }
+
+        return $rules;
     }
 }

@@ -9,13 +9,41 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display categories with children.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        return Category::with('children')->whereNull('parent_id')->get();;
+    }
+
+    /**
+     * Display a list of categories.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function list(Request $request)
+    {
+        if($request->query('limit') && is_numeric($request->query('limit'))) {
+            return Category::with(['children', 'parent'])->paginate($request->query('limit'));
+        }
+
+        if($request->query('slug')) {
+            return Category::where('slug', "=", $request->query('slug'))->with('children')->first();
+        }
+
+        return Category::all();
+    }
+
+     /**
+     * Display a list of categories.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function count()
+    {
+        return Category::count();
     }
 
     /**
@@ -35,9 +63,9 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show($category)
     {
-        return $category;
+        return Category::where('id', $category)->with(['children', 'parent'])->first();
     }
 
     /**
